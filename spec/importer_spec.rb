@@ -12,9 +12,10 @@ RSpec.describe Importer do
   let(:filename) { "files/feed.xml" }
   let(:batch_size) { 5 }
   let(:benchmark_enabled) { false }
+  let(:file_exists) { true }
 
   before do
-    allow(File).to receive(:exist?).with(filename).and_return(true)
+    allow(File).to receive(:exist?).with(filename).and_return(file_exists)
   end
 
   context "when processing full feed" do
@@ -44,6 +45,35 @@ RSpec.describe Importer do
     it "displays memory usage and execution time" do
       expect { importer.call }.to output(/Memory usage:/).to_stdout
       expect { importer.call }.to output(/Execution time:/).to_stdout
+    end
+  end
+
+  context "when the file is missing" do
+    let(:file_exists) { false }
+
+    it "raises an error" do
+      expect { importer.call }.to raise_error("File not found: #{filename}")
+    end
+  end
+
+  context "when the file format is invalid" do
+
+    before do
+      allow(File).to receive(:open).with(filename).and_raise(Nokogiri::XML::SyntaxError.new("Invalid XML format"))
+    end
+
+    it "raises a syntax error" do
+      expect { importer.call }.to raise_error("Error: Invalid XML format: Invalid XML format")
+    end
+  end
+
+  context "when an unexpected error occurs" do
+    before do
+      allow(File).to receive(:open).with(filename).and_raise(StandardError.new("Some unexpected error"))
+    end
+
+    it "raises the error message" do
+      expect { importer.call }.to raise_error("Some unexpected error")
     end
   end
 end

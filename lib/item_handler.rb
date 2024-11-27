@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class ItemHandler
   def initialize(parser)
     @parser = parser
@@ -20,7 +18,6 @@ class ItemHandler
     return unless @current_tag
 
     @current_item[@current_tag] ||= ""
-    @current_item[@current_tag] = @current_item[@current_tag].dup if @current_item[@current_tag].frozen?
     @current_item[@current_tag] << string
   end
 
