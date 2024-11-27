@@ -23,7 +23,8 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          gem install standard
+          gem install standard-performance -v 1.4.0
+          gem install standard -v 1.37.0
           bundle install
 
       - name: Run StandardRB
@@ -32,7 +33,6 @@ jobs:
   test:
     name: Run RSpec Tests
     runs-on: ubuntu-latest
-    needs: lint
     steps:
       - name: Checkout code
         uses: actions/checkout@v4

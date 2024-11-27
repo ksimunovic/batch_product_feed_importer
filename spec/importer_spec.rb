@@ -57,7 +57,6 @@ RSpec.describe Importer do
   end
 
   context "when the file format is invalid" do
-
     before do
       allow(File).to receive(:open).with(filename).and_raise(Nokogiri::XML::SyntaxError.new("Invalid XML format"))
     end
