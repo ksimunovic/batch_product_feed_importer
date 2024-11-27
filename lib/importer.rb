@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
+require "nokogiri"
+require "json"
+require "benchmark"
+require "objspace"
 require_relative "external_service"
 require_relative "item_parser"
 require_relative "batch"
-require "nokogiri"
-require "benchmark"
-require "objspace"
-require "json"
 
 class Importer
   def initialize(filename:, batch_size_in_mb:, external_service:, benchmark_enabled:)
@@ -20,8 +20,7 @@ class Importer
   def call
     # Check if the file exists and handle errors
     unless File.exist?(@filename)
-      puts "Error: File not found: #{@filename}"
-      exit 1
+      raise "File not found: #{@filename}"
     end
 
     parser = ItemParser.new
@@ -43,11 +42,9 @@ class Importer
       begin
         nokogiri_parser.parse(File.open(@filename))
       rescue Nokogiri::XML::SyntaxError => e
-        puts "Error: Invalid XML format: #{e.message}"
-        exit 1
+        raise "Error: Invalid XML format: #{e.message}"
       rescue => e
-        puts "Error: #{e.message}"
-        exit 1
+        raise e.message
       end
 
       @external_service.call(@batch.to_json) unless @batch.records.empty?

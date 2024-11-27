@@ -1,6 +1,4 @@
-# frozen_string_literal: true
-
-require "nokogiri"
+require_relative "item_handler"
 
 class ItemParser < Nokogiri::XML::SAX::Document
   attr_reader :records
@@ -9,6 +7,7 @@ class ItemParser < Nokogiri::XML::SAX::Document
     super
     @records = []
     @current_item = {}
+    @handler = ItemHandler.new(self)
   end
 
   def each_record(&block)
@@ -16,32 +15,14 @@ class ItemParser < Nokogiri::XML::SAX::Document
   end
 
   def start_element(name, attributes = [])
-    case name
-    when "item"
-      @current_item = @current_item.clear # Use .clear to keep memory usage low
-    when "g:id", "title", "description"
-      @current_tag = if name == "g:id"
-        "id"
-      else
-        name
-      end
-    end
+    @handler.start_element(name, attributes)
   end
 
   def characters(string)
-    return unless @current_tag
-
-    @current_item[@current_tag] ||= ""
-    @current_item[@current_tag] = @current_item[@current_tag].dup if @current_item[@current_tag].frozen?
-    @current_item[@current_tag] << string
+    @handler.characters(string)
   end
 
   def end_element(name)
-    if name == "item"
-      @records << @current_item
-      @each_record_block&.call(@current_item)
-    elsif %w[g:id title description].include?(name)
-      @current_tag = nil
-    end
+    @handler.end_element(name)
   end
 end

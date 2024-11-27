@@ -7,4 +7,8 @@ importer = Importer.new(
   benchmark_enabled: ARGV[2] == "1"
 )
 
-importer.call
+begin
+  importer.call
+rescue StandardError => e
+  puts "An error occurred: #{e.message}"
+end
