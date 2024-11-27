@@ -9,6 +9,6 @@ importer = Importer.new(
 
 begin
   importer.call
-rescue StandardError => e
+rescue => e
   puts "An error occurred: #{e.message}"
 end
