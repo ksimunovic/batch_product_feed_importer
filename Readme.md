@@ -1,7 +1,7 @@
 # Solution: Publitas Backend Code Challenge
 
 ## Overview
-This repository contains the solution for the Publitas Backend Code Challenge. The task is to parse a product feed XML file, extract product information, and send it to an external service in batches. For detailed task requirements, please refer to [Task.md](Task.md).
+This repository contains the solution for the Publitas Backend Code Challenge. The task is to parse a product feed XML file, extract product information, and send it to an external service in batches. For detailed task requirements, please refer to [Assignment.md](Assignment.md).
 
 ## Deliverables
 The project includes the following deliverables:
